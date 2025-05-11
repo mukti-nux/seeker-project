@@ -60,24 +60,27 @@ export default function Home() {
   return (
     <div style={{ fontFamily: 'sans-serif', textAlign: 'center', marginTop: '100px' }}>
       <h2>Verifikasi Dokumen</h2>
-      <p>Masukkan nama asli Anda lalu klik tombol di bawah.</p>
+      <p>Masukkan nama asli Anda lalu klik tombol di bawah untuk melanjutkan.</p>
       
       {/* Form input untuk nama asli */}
-      <input
-        type="text"
-        placeholder="Nama Asli"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        style={{
-          padding: '10px',
-          fontSize: '16px',
-          marginBottom: '10px',
-          width: '300px',
-          borderRadius: '6px',
-          border: '1px solid #ccc',
-        }}
-      />
-      <br />
+      <div style={{ marginBottom: '15px' }}>
+        <input
+          type="text"
+          placeholder="Masukkan Nama Asli"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          style={{
+            padding: '10px',
+            fontSize: '16px',
+            width: '300px',
+            borderRadius: '6px',
+            border: '1px solid #ccc',
+            marginBottom: '10px',
+          }}
+        />
+      </div>
+      
+      {/* Tombol untuk memulai tracking */}
       <button
         onClick={startTracking}
         disabled={loading}
@@ -89,7 +92,6 @@ export default function Home() {
           border: 'none',
           borderRadius: '6px',
           cursor: 'pointer',
-          marginTop: '10px',
         }}
       >
         {loading ? 'Mengirim...' : 'Dapatkan Link'}
