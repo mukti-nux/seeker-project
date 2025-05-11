@@ -28,7 +28,7 @@
 
     async function updateLocation() {
       try {
-        const res = await fetch('/api/get-latest');
+        const res = await fetch('https://seeker-project-vcl.vercel.app/api/get-latest');
         const data = await res.json();
         if (data.lat && data.lon) {
           marker.setLatLng([data.lat, data.lon]);
