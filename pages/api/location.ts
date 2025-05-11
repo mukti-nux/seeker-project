@@ -1,8 +1,6 @@
 // pages/api/location.ts
 export default function handler(req, res) {
     if (req.method === 'POST') {
-      console.log('Data yang diterima:', req.body);
-  
       const { lat, lon, acc } = req.body;
   
       if (!lat || !lon || !acc) {
@@ -13,7 +11,6 @@ export default function handler(req, res) {
   
       const message = `Lokasi Terkini:\nLatitude: ${lat}\nLongitude: ${lon}\nAkurasi: ${acc} meter`;
   
-      // Ambil bot token dan chat ID dari environment variables
       const botToken = process.env.TELEGRAM_BOT_TOKEN;
       const chatId = process.env.TELEGRAM_CHAT_ID;
   
@@ -37,7 +34,6 @@ export default function handler(req, res) {
         res.status(500).json({ message: 'Gagal mengirim data ke Telegram' });
       });
     } else {
-      res.status(405).json({ message: 'Metode tidak didukung' });
+      res.status(405).json({ message: 'Metode tidak didukung' });  // Ini hanya menerima POST
     }
-  }
-  
+  }  
