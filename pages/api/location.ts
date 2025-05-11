@@ -1,6 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  //cors mass
+  res.setHeader('Access-Control-Allow-Origin', 'https://seeker-project-vcl.vercel.app/'); // atau ganti * dengan domain tertentu
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
