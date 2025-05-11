@@ -47,7 +47,8 @@
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (position) => sendData(position, nama),
-          showError
+          showError,
+          { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
         );
       } else {
         alert("Browser Anda tidak mendukung GPS.");
@@ -55,7 +56,7 @@
     }
 
     function sendData(position, nama) {
-      fetch('/api/location', {
+      fetch('/api/latest-location', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
