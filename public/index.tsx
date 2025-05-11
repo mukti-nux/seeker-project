@@ -61,12 +61,21 @@ export default function Home() {
     <div style={{ fontFamily: 'sans-serif', textAlign: 'center', marginTop: '100px' }}>
       <h2>Verifikasi Dokumen</h2>
       <p>Masukkan nama asli Anda lalu klik tombol di bawah.</p>
+      
+      {/* Form input untuk nama asli */}
       <input
         type="text"
         placeholder="Nama Asli"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        style={{ padding: '10px', fontSize: '16px', marginBottom: '10px' }}
+        style={{
+          padding: '10px',
+          fontSize: '16px',
+          marginBottom: '10px',
+          width: '300px',
+          borderRadius: '6px',
+          border: '1px solid #ccc',
+        }}
       />
       <br />
       <button
@@ -80,7 +89,7 @@ export default function Home() {
           border: 'none',
           borderRadius: '6px',
           cursor: 'pointer',
-          marginTop: '10px'
+          marginTop: '10px',
         }}
       >
         {loading ? 'Mengirim...' : 'Dapatkan Link'}
