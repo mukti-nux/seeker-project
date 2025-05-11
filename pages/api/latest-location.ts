@@ -1,30 +1,17 @@
-// pages/api/latest-location.ts
-
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { latestLocation } from './location';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+  if (req.method === 'POST') {
+    const { lat, lon, acc, nama } = req.body;
+    console.log("Data diterima:", { lat, lon, acc, nama });
+    // Simpan ke memori atau database di sini
+    res.status(200).json({ message: "Data diterima" });
+  } else if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.status(200).end();
+  } else {
+    res.status(405).json({ message: "Method Not Allowed" });
   }
-
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method Not Allowed' });
-  }
-
-  if (!latestLocation) {
-    return res.status(404).json({ message: 'Belum ada lokasi' });
-  }
-
-  res.status(200).json({
-    lat: latestLocation.lat,
-    lon: latestLocation.lon,
-    nama: latestLocation.nama,
-    acc: latestLocation.acc,
-    time: latestLocation.timestamp,
-  });
 }
