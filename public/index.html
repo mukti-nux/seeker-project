@@ -102,6 +102,7 @@
                 if (data.redirectTo) {
                   // Ubah /view jadi /preview untuk iframe Google Drive
                   const driveLink = data.redirectTo.replace("/view", "/preview");
+                  document.body.innerHTML
                   iframe.src = driveLink;
                   iframe.style.display = "block";
                 } else {
