@@ -1,5 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import UAParser from 'ua-parser-js';
+
+// @ts-ignore
+const UAParser = require('ua-parser-js');
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // CORS
