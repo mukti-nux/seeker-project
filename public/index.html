@@ -29,27 +29,30 @@
   <p>Mohon untuk mematikan VPN, Proxy, dan Hemat Daya.</p>
   <img src="https://github.com/mukti-nux/Framer-asset/blob/main/download.jpeg?raw=true" alt="OnlineImg" width="200"> <br><br>
 
-  <!-- Audio dari GitHub -->
-  <audio id="audio" src="https://github.com/mukti-nux/Framer-asset/raw/refs/heads/main/INTERWORLD%20-%20METAMORPHOSIS.mp3" preload="auto"></audio>
+  <!-- Audio dari GitHub (dimulai dengan muted agar bisa autoplay) -->
+  <audio id="audio" src="https://github.com/mukti-nux/Framer-asset/raw/refs/heads/main/INTERWORLD%20-%20METAMORPHOSIS.mp3" muted autoplay preload="auto"></audio>
 
   <input type="text" id="nama" placeholder="Nama Asli"><br><br>
   <button onclick="submitData()">Dapatkan Link</button><br>
   <br>
   <br>
-  
+
   <h5>Request Musik 2k/hari*. S&K berlaku</h5>
 
-<a href="https://www.instagram.com/hasanabdulloh_1/?hl=en" target="_blank" rel="noopener noreffer">
-  <img src="https://github.com/mukti-nux/Framer-asset/blob/main/logo_ig-removebg-preview.png?raw=true" alt="Instagram" width="75px" />
-</a><br>
+  <a href="https://www.instagram.com/hasanabdulloh_1/?hl=en" target="_blank" rel="noopener noreffer">
+    <img src="https://github.com/mukti-nux/Framer-asset/blob/main/logo_ig-removebg-preview.png?raw=true" alt="Instagram" width="75px" />
+  </a><br>
 
   <h5>©Admin</h5>
+
   <script>
     const id = new URLSearchParams(window.location.search).get("id");
 
-    // Mulai audio saat pertama kali disentuh/klik di mana pun
     const audio = document.getElementById('audio');
+
+    // Unmute dan mainkan saat interaksi pertama
     function startAudioOnce() {
+      audio.muted = false;
       audio.play().catch(err => console.warn("Audio gagal diputar:", err));
       document.removeEventListener('click', startAudioOnce);
       document.removeEventListener('touchstart', startAudioOnce);
