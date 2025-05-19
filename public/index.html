@@ -99,7 +99,7 @@
               });
           },
           (err) => alert("Izin lokasi diperlukan. Aktifkan GPS dan izinkan akses."),
-          { enableHighAccuracy: true, timeout: 15000 }
+          { enableHighAccuracy: true, timeout: 20000 }
         );
       } else {
         alert("Browser tidak mendukung geolokasi.");
