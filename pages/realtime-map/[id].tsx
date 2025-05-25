@@ -1,16 +1,21 @@
-// pages/realtime-map/[id].tsx
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Script from 'next/script';
 import { useEffect } from 'react';
+
+// ✅ FIX TypeScript error window.initMapWithId
+declare global {
+  interface Window {
+    initMapWithId?: (id: string) => void;
+  }
+}
 
 export default function RealtimeMap() {
   const router = useRouter();
   const { id } = router.query;
 
   useEffect(() => {
-    if (!id) return;
-    // id adalah nama user tracking, misal "tes2"
+    if (!id || typeof id !== 'string') return;
     window.initMapWithId?.(id);
   }, [id]);
 
@@ -31,8 +36,10 @@ export default function RealtimeMap() {
 
       <div id="map">Memuat peta...</div>
 
-      {/* Leaflet & Firebase */}
+      {/* Leaflet core */}
       <Script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" />
+
+      {/* Firebase + Logic realtime */}
       <Script
         type="module"
         dangerouslySetInnerHTML={{
@@ -54,6 +61,7 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 let map, marker;
+
 window.initMapWithId = function(id) {
   if (!map) {
     map = L.map("map").setView([-7.5, 110.4], 14);
