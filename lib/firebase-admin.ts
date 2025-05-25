@@ -1,14 +1,13 @@
-import admin from "firebase-admin";
+import { cert, getApps, initializeApp } from 'firebase-admin/app';
+import { getDatabase } from 'firebase-admin/database';
 
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-    }),
-    databaseURL: "https://console.firebase.google.com/u/2/project/seeker-projectku/database/seeker-projectku-default-rtdb/data/~2F", // Ganti <project-id>
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT!);
+
+if (!getApps().length) {
+  initializeApp({
+    credential: cert(serviceAccount),
+    databaseURL: 'https://console.firebase.google.com/u/2/project/seeker-projectku/database/seeker-projectku-default-rtdb/data/~2F',
   });
 }
 
-export const db = admin.database();
+export const db = getDatabase();
