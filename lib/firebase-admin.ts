@@ -7,7 +7,7 @@ if (!admin.apps.length) {
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
       privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
     }),
-    databaseURL: "https://seeker-projectku.firebaseio.com", // Ganti <project-id>
+    databaseURL: "https://console.firebase.google.com/u/2/project/seeker-projectku/database/seeker-projectku-default-rtdb/data/~2F", // Ganti <project-id>
   });
 }
 
