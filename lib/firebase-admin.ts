@@ -6,7 +6,7 @@ const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT!);
 if (!getApps().length) {
   initializeApp({
     credential: cert(serviceAccount),
-    databaseURL: 'https://console.firebase.google.com/u/2/project/seeker-projectku/database/seeker-projectku-default-rtdb/data/~2F',
+    databaseURL: 'https://seeker-projectku-default-rtdb.firebaseio.com',
   });
 }
 
