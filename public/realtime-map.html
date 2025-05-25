@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Live Location Tracking</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+  />
+   <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "...",
+    authDomain: "...",
+    databaseURL: "...",
+    projectId: "...",
+    storageBucket: "...",
+    messagingSenderId: "...",
+    appId: "..."
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  const lokasiRef = ref(db, 'tracking/anon'); // ganti anon sesuai ID
+
+  onValue(lokasiRef, (snapshot) => {
+    const data = snapshot.val();
+    console.log("Lokasi sekarang:", data);
+    // lalu tampilkan di Leaflet
+
+   src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+  });
+  </script>
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; }
+    #map { width: 100%; height: 100vh; }
+    .leaflet-popup-content { font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script>
+    const map = L.map('map').setView([-7.5, 110.4], 13); // posisi default awal (misal: Magelang)
+
+    // Tambah tile map
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    let marker;
+
+    async function fetchLocation() {
+      const res = await fetch('/api/last-location'); // ganti dengan endpoint kamu
+      const data = await res.json();
+
+      if (!data.lat || !data.lng) return;
+
+      // Hapus marker lama
+      if (marker) map.removeLayer(marker);
+
+      // Tambah marker baru
+      marker = L.marker([data.lat, data.lng]).addTo(map);
+
+      // Tambah info popup
+      marker.bindPopup(`
+        <b>${data.device || "Unknown Device"}</b><br>
+        Time: ${data.time}<br>
+        Accuracy: ${data.acc || "?"} m
+      `).openPopup();
+
+      // Gerakkan peta ke posisi baru
+      map.setView([data.lat, data.lng], 16);
+    }
+
+    // Ambil lokasi setiap 5 detik
+    setInterval(fetchLocation, 5000);
+    fetchLocation(); // pertama langsung jalan
+  </script>
+</body>
+</html>

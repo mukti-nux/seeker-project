@@ -1,4 +1,9 @@
 node_modules
 .next
 .env
+.env.local
 .DS_Store
+serviceAccountKey.json
+serviceAccountKey.json
+serviceAccountKey.json
+seeker-clean/
