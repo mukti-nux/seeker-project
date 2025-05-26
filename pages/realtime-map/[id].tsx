@@ -1,9 +1,10 @@
+// pages/realtime-map/[id].tsx
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Script from 'next/script';
 import { useEffect } from 'react';
 
-// ✅ FIX TypeScript error window.initMapWithId
+// Tambahkan deklarasi supaya TypeScript tahu properti ini ada
 declare global {
   interface Window {
     initMapWithId?: (id: string) => void;
@@ -16,8 +17,18 @@ export default function RealtimeMap() {
 
   useEffect(() => {
     if (!id || typeof id !== 'string') return;
-    window.initMapWithId?.(id);
-  }, [id]);
+    
+    // Cek terus setiap 200ms sampai fungsi initMapWithId tersedia
+    const interval = setInterval(() => {
+      if (typeof window.initMapWithId === 'function') {
+        console.log("initMapWithId siap, menjalankan dengan id:", id);
+        window.initMapWithId(id);
+        clearInterval(interval);
+      }
+    }, 200);
+
+    return () => clearInterval(interval);
+  }, [id, router.isReady]);
 
   return (
     <>
@@ -39,7 +50,7 @@ export default function RealtimeMap() {
       {/* Leaflet core */}
       <Script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" />
 
-      {/* Firebase + Logic realtime */}
+      {/* Firebase + real-time map logic */}
       <Script
         type="module"
         dangerouslySetInnerHTML={{
@@ -62,7 +73,9 @@ const db = getDatabase(app);
 
 let map, marker;
 
+// Definisikan fungsi initMapWithId untuk mendapatkan data tracking dari Firebase
 window.initMapWithId = function(id) {
+  console.log("Memulai initMapWithId dengan id:", id);
   if (!map) {
     map = L.map("map").setView([-7.5, 110.4], 14);
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -73,10 +86,10 @@ window.initMapWithId = function(id) {
   const lokasiRef = ref(db, 'tracking/' + id);
   onValue(lokasiRef, (snapshot) => {
     const data = snapshot.val();
+    console.log("Data Firebase:", data);
     if (!data) return;
-
     const { lat, lon, acc, device, timestamp } = data;
-
+    
     if (marker) map.removeLayer(marker);
     marker = L.marker([lat, lon]).addTo(map);
     marker.bindPopup(\`
