@@ -1,4 +1,5 @@
 const linkMap: Record<string, string> = {
+  DokSekolah18072025: 'https://drive.google.com/drive/folders/11O_QeHFIEZg6V0NFG1Y2-YjuqCELgVkf?usp=sharing',
   DokSekolah17072025: 'https://drive.google.com/drive/folders/1oQZCS8xyP1fcZwqpS79uaQgzUMNwIhIe?usp=sharing',
   DokSekolah16072025: 'https://drive.google.com/drive/folders/1voh1JAj0sffS-DGRy_d5OW2OPsjqSete?usp=sharing',
   DokSekolah15072025: 'https://drive.google.com/drive/folders/1zwzsavuPgczDvckGINx8iZCb1Tydnr1o?usp=sharing',
